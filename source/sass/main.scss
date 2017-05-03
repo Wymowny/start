@@ -1,0 +1,12 @@
+// main.scss
+@import 'utils/mixins';
+
+@import 'base/reset';
+@import 'base/colors';
+@import 'base/typography';
+@import 'base/variables';
+
+@import 'layout/footer';
+@import 'layout/header';
+
+// @import 'components/module';
