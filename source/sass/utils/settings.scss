@@ -1,0 +1,46 @@
+/**
+ * Global Variables
+ */
+
+$s-fontFamilyBase: Roboto, Helvetica, Arial, sans-serif !default;
+
+/**
+ * Typography
+ */
+
+// Font-sizes
+$s-sizeFontXSmall: 12px;
+$s-lineHeightFontXSmall: 1.333; // 16px
+
+$s-sizeFontSmall: 14px;
+$s-lineHeightFontSmall: 1.429; // 20px
+
+$s-sizeFontBase: 16px;
+$s-lineHeightFontBase: 1.375; // 22px
+
+$s-sizeFontLarge: 24px;
+$s-lineHeightFontLarge: 1.25; // 30px
+
+$s-sizeFontXLarge: 28px;
+$s-lineHeightFontXLarge: 1.143; // 32px
+
+// Font-weights
+$s-fontWeightLight: 200;
+$s-fontWeightRegular: 400;
+$s-fontWeightBold: 700;
+
+// Breakpoints
+$s-sizeBreakpointSmall:  pxToRem(375px);  // small
+$s-sizeBreakpointMedium: pxToRem(768px);  // medium
+$s-sizeBreakpointLarge:  pxToRem(1440px); // large
+
+// Spacing
+$s-sizeSpaceBase: pxToRem(20px);
+$s-sizeSpaceSmall: $s-sizeSpaceBase / 2;
+$s-sizeSpaceTiny: $s-sizeSpaceBase/ 4;
+
+// Grid Settings
+$s-gridColumns: 12;
+
+// Misc
+$s-borderRadius: pxToRem(3px);

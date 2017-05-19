@@ -1,95 +1,103 @@
 'use strict';
 
 var gulp = require('gulp'),
-    sass = require('gulp-sass'),
     browserSync = require('browser-sync').create(),
-    cssnano = require('gulp-cssnano'),
-    imagemin = require('gulp-imagemin'),
-    del = require('del'),
-    cache = require('gulp-cache'),
     runSequence = require('run-sequence'),
-    uglify = require('gulp-uglify'),
+    cleanCSS = require('gulp-clean-css'),
+    imagemin = require('gulp-imagemin'),
     useref = require('gulp-useref'),
+    uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
-    cleanCSS = require('gulp-clean-css');
+    cache = require('gulp-cache'),
+    babel = require('gulp-babel'),
+    sass = require('gulp-sass'),
+    del = require('del');
 
 var config = {
-    mainScss: './source/sass/main.scss',
-    sassSource: './source/sass/**/*.scss',
-    htmlSource: './source/*.html',
-    jsSource: './source/app/js/**/*.js',
-    sassDest: './build/css',
     appSource: './source',
-    build: './build'
+    build: './build',
+
+    sassSource: './source/sass/**/*.scss',
+    mainScss: './source/sass/main.scss',
+    sassDest: './build/css',
+
+    htmlSource: './source/*.html',
+
+    jsSource: './source/js/*.js',
+    jsDest: './build/js',
+
+    fontsSource: './source/fonts/**/*',
+    fontsDest: './build/fonts',
+
+    imageSource: './source/images/*.+(png|jpg|jpeg|gif|svg)',
+    imagesDest: './build/images'
 };
 
-gulp.task('sass', () => {
-    return gulp.src(config.mainScss)
-        .pipe(sass().on('error', () => sass.logError()))
-        .pipe(cleanCSS())
+gulp.task('watch', function () {
+    gulp.watch(config.sassSource, ['sass']);
+    gulp.watch(config.htmlSource, ['htmlCopy']);
+    gulp.watch(config.jsSource, ['javascript']);
+});
+
+gulp.task('sass', function () {
+    return gulp.src(config.mainScss).pipe(sass().on('error', function () {
+        return sass.logError();
+    })).pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(config.sassDest))
         .pipe(browserSync.reload({
         stream: true
-        }))
+    }));
 });
 
-gulp.task('watch', () => {
-    gulp.watch(config.sassSource, ['sass']);
-    gulp.watch(config.htmlSource, browserSync.reload);
-    gulp.watch(config.jsSource, browserSync.reload);
-});
-
-gulp.task('htmlCopy', () => {
-    gulp.src('./source/*.html')
-        .pipe(gulp.dest('./build'))
+gulp.task('htmlCopy', function () {
+    gulp.src(config.htmlSource)
+        .pipe(gulp.dest(config.build))
         .pipe(browserSync.reload({
-            stream: true
-        }))
+        stream: true
+    }));
 });
 
-gulp.task('javascript', () => {
-    return gulp.src('source/js/*.js')
+gulp.task('javascript', function () {
+    return gulp.src(config.jsSource)
+        .pipe(babel({
+            presets: ['es2015']
+        }))
         .pipe(concat('main.js'))
         .pipe(rename('main.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('build/js'))
+        .pipe(gulp.dest(config.jsDest))
         .pipe(browserSync.reload({
-            stream: true
-        }))
+        stream: true
+    }));
 });
 
-gulp.task('images', () => {
-    return gulp.src('source/images/*.+(png|jpg|jpeg|gif|svg)')
+gulp.task('images', function () {
+    return gulp.src(config.imageSource)
         .pipe(cache(imagemin({
-            interlaced: true
-        })))
-        .pipe(gulp.dest('build/images'))
+        interlaced: true
+    })))
+        .pipe(gulp.dest(config.imagesDest));
 });
 
-gulp.task('clean', () => {
-    return del([
-        'build/**',
-    ]);
+gulp.task('clean', function () {
+    return del(['./build/**']);
 });
 
-gulp.task('browserSync', () => {
+gulp.task('browserSync', function () {
     browserSync.init({
         server: {
             baseDir: config.build
         }
-    })
+    });
 });
 
-gulp.task('fonts', () => {
-    return gulp.src('source/fonts/**/*')
-        .pipe(gulp.dest('build/fonts'))
+gulp.task('fonts', function () {
+    return gulp.src(config.fontsSource)
+        .pipe(gulp.dest(config.fontsDest));
 });
 
-gulp.task('default', (callback) => {
-    runSequence('clean',
-        ['images', 'sass', 'fonts', 'javascript', 'htmlCopy', 'browserSync', 'watch'],
-        callback
-    )
+gulp.task('default', function (callback) {
+    runSequence('clean', ['images', 'sass', 'fonts', 'javascript', 'htmlCopy', 'browserSync', 'watch'], callback);
 });
