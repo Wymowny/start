@@ -93,6 +93,7 @@
 /**
  * Base Box Shadow
 */
+
 @mixin baseBoxShadow($top: false) {
 	@if $top == true {
 		box-shadow: 0 pxToRem(-4px) pxToRem(4px) 0 rgba($s-colorTextDefault, 0.15);
@@ -123,4 +124,85 @@
 	&:-ms-input-placeholder {
 		@content;
 	}
+}
+
+/**
+ * Pseudo-elements
+ */
+
+@mixin pseudo($display: block, $pos: absolute, $content: ''){
+	content: $content;
+	display: $display;
+	position: $pos;
+}
+
+/**
+ * CSS Triangles
+ */
+
+@mixin css-triangle($color, $direction, $size: 6px, $position: absolute, $round: false){
+	@include pseudo($pos: $position);
+	width: 0;
+	height: 0;
+	@if $round {
+		border-radius: 3px;
+	}
+	@if $direction == down {
+		border-left: $size solid transparent;
+		border-right: $size solid transparent;
+		border-top: $size solid $color;
+		margin-top: 0 - round( $size / 2.5 );
+	} @else if $direction == up {
+		border-left: $size solid transparent;
+		border-right: $size solid transparent;
+		border-bottom: $size solid $color;
+		margin-bottom: 0 - round( $size / 2.5 );
+	} @else if $direction == right {
+		border-top: $size solid transparent;
+		border-bottom: $size solid transparent;
+		border-left: $size solid $color;
+		margin-right: -$size;
+	} @else if  $direction == left {
+		border-top: $size solid transparent;
+		border-bottom: $size solid transparent;
+		border-right: $size solid $color;
+		margin-left: -$size;
+	}
+}
+
+/**
+ * Truncate
+ */
+
+@mixin truncate($truncation-boundary) {
+	max-width: $truncation-boundary;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/**
+ * Vendor prefixing
+ */
+
+@mixin prefix($property, $value, $vendors: webkit moz ms o, $default: true) {
+	@if $vendors {
+		@each $vendor in $vendors {
+			#{"-" + $vendor + "-" + $property}: #{$value};
+		}
+	}
+	@if $default {
+		#{$property}: #{$value};
+	}
+}
+
+/**
+ * Centering in both directions
+ */
+
+@mixin center-vertically {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	@include prefix(transform, translate(-50%, -50%), 'webkit' 'ms');
 }

@@ -2,6 +2,7 @@
 
 var gulp = require('gulp'),
     browserSync = require('browser-sync').create(),
+    autoprefixer = require('gulp-autoprefixer'),
     runSequence = require('run-sequence'),
     cleanCSS = require('gulp-clean-css'),
     imagemin = require('gulp-imagemin'),
@@ -30,7 +31,7 @@ var config = {
     fontsSource: './source/fonts/**/*',
     fontsDest: './build/fonts',
 
-    imageSource: './source/images/*.+(png|jpg|jpeg|gif|svg)',
+    imageSource: './source/images/**',
     imagesDest: './build/images'
 };
 
@@ -38,12 +39,17 @@ gulp.task('watch', function () {
     gulp.watch(config.sassSource, ['sass']);
     gulp.watch(config.htmlSource, ['htmlCopy']);
     gulp.watch(config.jsSource, ['javascript']);
+    gulp.watch(config.imageSource, ['images']);
+    gulp.watch(config.fontsSource, ['fonts']);
 });
 
 gulp.task('sass', function () {
-    return gulp.src(config.mainScss).pipe(sass().on('error', function () {
-        return sass.logError();
-    })).pipe(cleanCSS())
+    return gulp.src(config.mainScss)
+        .pipe(sass()).on('error', sass.logError)
+        .pipe(cleanCSS())
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions']
+        }))
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(config.sassDest))
         .pipe(browserSync.reload({
@@ -75,14 +81,13 @@ gulp.task('javascript', function () {
 
 gulp.task('images', function () {
     return gulp.src(config.imageSource)
-        .pipe(cache(imagemin({
-        interlaced: true
-    })))
-        .pipe(gulp.dest(config.imagesDest));
+        .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
+        .pipe(gulp.dest(config.imagesDest))
+        .pipe(notify({ message: 'Images task complete' }))
 });
 
 gulp.task('clean', function () {
-    return del(['./build/**']);
+    return del(['./build/**'])
 });
 
 gulp.task('browserSync', function () {
@@ -95,9 +100,9 @@ gulp.task('browserSync', function () {
 
 gulp.task('fonts', function () {
     return gulp.src(config.fontsSource)
-        .pipe(gulp.dest(config.fontsDest));
+        .pipe(gulp.dest(config.fontsDest))
 });
 
 gulp.task('default', function (callback) {
-    runSequence('clean', ['images', 'sass', 'fonts', 'javascript', 'htmlCopy', 'browserSync', 'watch'], callback);
+    runSequence('clean', ['images', 'sass', 'fonts', 'javascript', 'htmlCopy', 'browserSync', 'watch'], callback)
 });
