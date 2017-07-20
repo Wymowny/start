@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     cleanCSS = require('gulp-clean-css'),
     imagemin = require('gulp-imagemin'),
+    notify = require("gulp-notify"),
     useref = require('gulp-useref'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
@@ -52,6 +53,7 @@ gulp.task('sass', function () {
         }))
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(config.sassDest))
+        .pipe(notify({ message: 'SASS task complete' }))
         .pipe(browserSync.reload({
         stream: true
     }));
@@ -62,6 +64,7 @@ gulp.task('htmlCopy', function () {
         .pipe(gulp.dest(config.build))
         .pipe(browserSync.reload({
         stream: true
+
     }));
 });
 
@@ -74,6 +77,7 @@ gulp.task('javascript', function () {
         .pipe(rename('main.min.js'))
         .pipe(uglify())
         .pipe(gulp.dest(config.jsDest))
+        .pipe(notify({ message: 'Javascript task complete' }))
         .pipe(browserSync.reload({
         stream: true
     }));
@@ -83,7 +87,6 @@ gulp.task('images', function () {
     return gulp.src(config.imageSource)
         .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
         .pipe(gulp.dest(config.imagesDest))
-        .pipe(notify({ message: 'Images task complete' }))
 });
 
 gulp.task('clean', function () {
