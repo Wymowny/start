@@ -24,7 +24,7 @@ var config = {
     mainScss: './source/sass/main.scss',
     sassDest: './build/css',
 
-    htmlSource: './source/*.html',
+    htmlSource: './source/*.{html, hbs, php}',
 
     jsSource: './source/js/*.js',
     jsDest: './build/js',
@@ -51,21 +51,21 @@ gulp.task('sass', function () {
         .pipe(autoprefixer({
             browsers: ['last 2 versions']
         }))
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(config.sassDest))
-        .pipe(notify({ message: 'SASS task complete' }))
+        .pipe(notify({message: 'SASS task complete'}))
         .pipe(browserSync.reload({
-        stream: true
-    }));
+            stream: true
+        }));
 });
 
 gulp.task('htmlCopy', function () {
     gulp.src(config.htmlSource)
         .pipe(gulp.dest(config.build))
         .pipe(browserSync.reload({
-        stream: true
+            stream: true
 
-    }));
+        }));
 });
 
 gulp.task('javascript', function () {
@@ -77,15 +77,15 @@ gulp.task('javascript', function () {
         .pipe(rename('main.min.js'))
         .pipe(uglify())
         .pipe(gulp.dest(config.jsDest))
-        .pipe(notify({ message: 'Javascript task complete' }))
+        .pipe(notify({message: 'Javascript task complete'}))
         .pipe(browserSync.reload({
-        stream: true
-    }));
+            stream: true
+        }));
 });
 
 gulp.task('images', function () {
     return gulp.src(config.imageSource)
-        .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
+        .pipe(cache(imagemin({optimizationLevel: 5, progressive: true, interlaced: true})))
         .pipe(gulp.dest(config.imagesDest))
 });
 
