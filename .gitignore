@@ -1,3 +1,11 @@
-/build
-/node_modules
+node_modules
+build
+source/assets/.tmp
+.sass-cache
+.cache
 .idea
+*.iws
+atlassian-ide-plugin.xml
+.vagrant
+.qunit
+.DS_Store
